@@ -8,6 +8,20 @@ const tweetRouter = require("./controllers/tweets")
 const rfs = require("rotating-file-stream");
 const path = require("path")
 const rateLimit = require("express-rate-limit")
+const swaggerUi = require("swagger-ui-express");
+const swaggerRouter = require("./controllers/swaggerRoutes")
+const router = express.Router()
+const YAML = require("yamljs");
+
+// Load the YAML documentation files
+const userDocumentation = YAML.load(path.join(__dirname, "./user.yaml"));
+const adminDocumentation = YAML.load(path.join(__dirname, "./admin.yaml"));
+
+
+
+
+
+
 
 
 // setting up log rotation
@@ -16,6 +30,7 @@ const logStream = rfs.createStream("access.log", {
     path: path.join(__dirname, "logs"), // Directory to save logs
     maxFiles: 7, // Keep logs for the last 7 days
 });
+
 
 
 //! Middleware
@@ -39,6 +54,19 @@ const tweetLimiter = rateLimit({
 	standardHeaders: 'draft-8', 
 	legacyHeaders: false,
 })
+
+
+
+
+// Swagger Configuration
+app.use("/api", swaggerUi.serve, swaggerRouter )
+
+
+
+
+
+
+
 
 
 // !Routes

@@ -70,12 +70,6 @@ router.post("/signup", async (req, res) => {
 
 
 
-
-
-
-
-
-
 router.post("/signin", async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -102,7 +96,7 @@ router.post("/signin", async (req, res) => {
         }
 
         // Compare hashed password
-        const isPasswordValid = bcrypt.compareSync(password, user.password);
+        const isPasswordValid = await bcrypt.compareSync(password, user.password);
         if (!isPasswordValid) {
             return res.status(400).json({ msg: "Invalid email or password" });
         }

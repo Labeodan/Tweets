@@ -1,0 +1,358 @@
+openapi: 3.0.0
+info:
+  title: "Tweet Service API"
+  description: "API for managing tweets and comments."
+  version: "1.0.0"
+paths:
+  /auth/signup:
+    post:
+      summary: Sign up a new user
+      description: Users can sign up with their name, first name, email, country, and password. Email verification required.
+      operationId: signUp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstname:
+                  type: string
+                lastname:
+                  type: string
+                email:
+                  type: string
+                country:
+                  type: string
+                password:
+                  type: string
+                confirmPassword:
+                  type: string
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+        "400":
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+        "500":
+          description: Internal server error
+  /auth/signin:
+    post:
+      summary: User sign-in
+      description: Users can sign in with their email and password to receive an authentication token.
+      operationId: signIn
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Sign-in successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+        "400":
+          description: Invalid email or password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+        "500":
+          description: Internal server error
+  /tweets:
+    post:
+      summary: "Create a Tweet"
+      description: "User can create a tweet"
+      operationId: "createTweet"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tweet:
+                  type: string
+                  description: "The content of the tweet"
+      responses:
+        '201':
+          description: "Tweet created successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: "Tweet created successfully"
+                  newTweet:
+                    type: object
+                    properties:
+                      ownerId:
+                        type: string
+                      tweet:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+    get:
+      summary: "Get all Tweets"
+      description: "User can retrieve all tweets"
+      operationId: "getAllTweets"
+      responses:
+        '200':
+          description: "A list of tweets"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tweets:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        tweet:
+                          type: string
+                        created_at:
+                          type: string
+                          format: date-time
+                        comments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                              description:
+                                type: string
+                              ownerId:
+                                type: string
+                              created_at:
+                                type: string
+                                format: date-time
+  /tweets/{id}:
+    get:
+      summary: "Get a specific Tweet"
+      description: "User can retrieve a specific tweet by ID"
+      operationId: "getTweetById"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "The ID of the tweet"
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "The tweet details"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tweet:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      tweet:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                      comments:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            description:
+                              type: string
+                            ownerId:
+                              type: string
+                            created_at:
+                              type: string
+                              format: date-time
+    put:
+      summary: "Update a Tweet"
+      description: "User can update a tweet they own"
+      operationId: "updateTweet"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "The ID of the tweet"
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tweet:
+                  type: string
+      responses:
+        '200':
+          description: "Tweet updated successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: "Tweet updated successfully"
+                  updatedTweet:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      tweet:
+                        type: string
+                      updated_at:
+                        type: string
+                        format: date-time
+    delete:
+      summary: "Delete a Tweet"
+      description: "User can delete their own tweet"
+      operationId: "deleteTweet"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "The ID of the tweet"
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Tweet deleted successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: "Tweet deleted successfully"
+  /tweets/{tweetId}/comments:
+    post:
+      summary: "Add a Comment to a Tweet"
+      description: "User can add a comment to a tweet"
+      operationId: "addComment"
+      parameters:
+        - name: "tweetId"
+          in: "path"
+          required: true
+          description: "The ID of the tweet"
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+      responses:
+        '201':
+          description: "Comment added successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: "Comment added successfully"
+                  tweet:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      tweet:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                      comments:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            description:
+                              type: string
+                            ownerId:
+                              type: string
+                            created_at:
+                              type: string
+                              format: date-time
+  /tweets/{tweetId}/comments/{commentId}:
+    delete:
+      summary: "Delete a Comment"
+      description: "User can delete their own comment"
+      operationId: "deleteComment"
+      parameters:
+        - name: "tweetId"
+          in: "path"
+          required: true
+          description: "The ID of the tweet"
+          schema:
+            type: string
+        - name: "commentId"
+          in: "path"
+          required: true
+          description: "The ID of the comment"
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Comment deleted successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: "Comment deleted successfully"

@@ -1,0 +1,119 @@
+openapi: 3.0.0
+info:
+  title: "Tweet Service API (Admin Routes)"
+  description: "API for admin operations on tweets and comments."
+  version: "1.0.0"
+paths:
+  /tweets/{id}:
+    delete:
+      summary: "Delete a Tweet (Admin)"
+      description: "Admins can delete any tweet."
+      operationId: "adminDeleteTweet"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "The ID of the tweet to delete"
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Tweet deleted successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: "Tweet deleted successfully"
+        '403':
+          description: "Access denied - Admin only"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: "Access denied"
+        '404':
+          description: "Tweet not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: "Tweet not found"
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: "Internal server error"
+
+  /tweets/{tweetId}/comments/{commentId}:
+    delete:
+      summary: "Delete a Comment (Admin)"
+      description: "Admins can delete any comment."
+      operationId: "adminDeleteComment"
+      parameters:
+        - name: "tweetId"
+          in: "path"
+          required: true
+          description: "The ID of the tweet containing the comment"
+          schema:
+            type: string
+        - name: "commentId"
+          in: "path"
+          required: true
+          description: "The ID of the comment to delete"
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Comment deleted successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: "Comment deleted successfully"
+        '403':
+          description: "Access denied - Admin only"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: "Access denied"
+        '404':
+          description: "Tweet or Comment not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: "Tweet or Comment not found"
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: "Internal server error"
