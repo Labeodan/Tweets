@@ -4,20 +4,21 @@ const mongoose = require("mongoose")
 require("dotenv").config()
 const app = express()
 const authRouter = require("./controllers/users")
+const tweetRouter = require("./controllers/tweets")
 
 
 
 
 //! Middleware
 app.use(morgan("dev"))
+app.use(express.json())
 
 
 // !Routes
 app.use("/auth", authRouter)
+app.use("/tweets", tweetRouter)
 
-
-
-
+  
 
 
 
