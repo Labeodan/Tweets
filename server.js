@@ -25,11 +25,25 @@ app.use(express.json())
 
 
 // Setting up Rate Limiting
+const authLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000,
+    limit: 5,
+    message: "You can only make 5 request per minute.",
+	standardHeaders: 'draft-8', 
+	legacyHeaders: false,
+})
+const tweetLimiter = rateLimit({
+    windowMs: 86400000,
+    limit: 300,
+    message: "You can only make 300 request per day.",
+	standardHeaders: 'draft-8', 
+	legacyHeaders: false,
+})
 
 
 // !Routes
-app.use("/auth", authRouter)
-app.use("/tweets", tweetRouter)
+app.use("/auth", authLimiter, authRouter)
+app.use("/tweets", tweetLimiter, tweetRouter)
 
 
   
